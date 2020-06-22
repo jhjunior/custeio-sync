@@ -1,16 +1,10 @@
-FROM golang:1.14-alpine AS builder
-
-WORKDIR /go/src/github.com/tsuru/tsuru-client
-
-RUN apk add --update gcc git make musl-dev
-
-RUN git clone https://github.com/tsuru/tsuru-client.git .
-    
-RUN make build
-
 FROM alpine:latest
 
-COPY --from=builder /go/src/github.com/tsuru/tsuru-client/bin/tsuru /bin/tsuru
+RUN wget https://github.com/tsuru/tsuru-client/releases/download/1.8.1/tsuru_1.8.1_linux_amd64.tar.gz -O tsuru.tar.gz
+
+RUN tar -zxvf tsuru.tar.gz tsuru && rm tsuru.tar.gz
+
+COPY /tsuru /bin/tsuru
 
 RUN apk update
 
@@ -29,5 +23,3 @@ ENV PATH $GOPATH/bin:/usr/local/go/bin:$PATH
 
 RUN mkdir -p "$GOPATH/src" "$GOPATH/bin" && chmod -R 777 "$GOPATH"
 WORKDIR $GOPATH
-
-CMD ["tsuru"]
