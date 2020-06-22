@@ -14,7 +14,6 @@ RUN set -ex \
      && apk add --no-cache \
         openssl \
         go \
-        make \
         cyrus-sasl-dev
 RUN rm /var/cache/apk/*
 
