@@ -1,5 +1,3 @@
-# MAINTAINER Backstage <backstage@corp.globo.com>
-
 FROM golang:1.14-alpine AS builder
 
 WORKDIR /go/src/github.com/tsuru/tsuru-client
