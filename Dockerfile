@@ -1,3 +1,5 @@
+# TAG 0.2
+
 FROM alpine:latest
 
 ENV LANG='en_US.UTF-8' LANGUAGE='en_US:en' LC_ALL='en_US.UTF-8'
