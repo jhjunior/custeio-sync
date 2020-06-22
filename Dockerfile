@@ -1,16 +1,9 @@
-FROM golang:1.14-alpine AS builder
-
-WORKDIR /go/src/github.com/tsuru/tsuru-client
-
-RUN apk add --update gcc git make musl-dev
-
-RUN git clone https://github.com/tsuru/tsuru-client.git .
-    
-RUN make build
-
 FROM alpine:latest
 
-COPY --from=builder /go/src/github.com/tsuru/tsuru-client/bin/tsuru /bin/tsuru
+ENV LANG='en_US.UTF-8' LANGUAGE='en_US:en' LC_ALL='en_US.UTF-8'
+ENV PYCURL_SSL_LIBRARY=openssl
+
+ENV TSURU_VERSION 1.8.1
 
 RUN apk update
 
@@ -20,13 +13,24 @@ RUN set -ex \
      && apk add --no-cache \
         openssl \
         go \
+        make \
+        tzdata \
+        curl \
         cyrus-sasl-dev
 RUN rm /var/cache/apk/*
+
+RUN set -ex \
+  && cp /usr/share/zoneinfo/America/Sao_Paulo /etc/localtime \
+  && curl -L -O https://github.com/tsuru/tsuru-client/releases/download/${TSURU_VERSION}/tsuru_${TSURU_VERSION}_linux_386.tar.gz \
+  && tar -xvzf tsuru_${TSURU_VERSION}_linux_386.tar.gz \
+  && mv tsuru /usr/bin \
+  && chmod a+x /usr/bin/tsuru \
+  && rm tsuru_${TSURU_VERSION}_linux_386.tar.gz \
+  && tsuru target-add default https://tsuru.globoi.com -s \
+  && tsuru --version
 
 ENV GOPATH /go
 ENV PATH $GOPATH/bin:/usr/local/go/bin:$PATH
 
 RUN mkdir -p "$GOPATH/src" "$GOPATH/bin" && chmod -R 777 "$GOPATH"
 WORKDIR $GOPATH
-
-CMD ["tsuru"]
