@@ -28,7 +28,6 @@ RUN set -ex \
   && mv tsuru /usr/bin \
   && chmod a+x /usr/bin/tsuru \
   && rm tsuru_${TSURU_VERSION}_linux_386.tar.gz \
-  && tsuru target-add default https://tsuru.globoi.com -s \
   && tsuru --version
 
 ENV GOPATH /go
